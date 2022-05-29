@@ -297,7 +297,7 @@ def have_connection():
                 print("Connecting attempt Number=",retry )
             client.connect(broker_address,broker_port)#,keepalive=5
             while not client.connected_flag:
-                client.loop(0.01)
+                client.loop(0.5)
             connected_once=True
             retry=0
             return True, 0
@@ -404,7 +404,7 @@ class Test(RelativeLayout):
         self.ids.timestatus.text = str(datetime.now().strftime("%H:%M"))
         self.configurationVariable['updatedTime'] = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         self.configurationVariable['timestamp'] = int(time.time())
-        client.loop(0.01)
+        client.loop(0.5)
         #if client.connected_flag:
         print("/ate/tektron/"+self.configurationVariable['id'])
         ret = client.publish("/ate/tektron/"+self.configurationVariable['id'],json.dumps(self.configurationVariable),qos=1)
@@ -421,7 +421,7 @@ class Test(RelativeLayout):
                 self.ids.faultstatus.source = "data/fault.png"
                 GPIO.output(Buzzer, 1)
                 self.ids.buzzerbutton.background_normal = "data/buzzer.png"
-                client.loop(0.01)
+                client.loop(0.5)
                 #if client.connected_flag:
                 ret = client.publish("/ate/tektron/"+self.configurationVariable['id'],json.dumps(self.configurationVariable),qos=1)
                 print("publish",ret)
@@ -446,7 +446,7 @@ class Test(RelativeLayout):
                 self.ids.firestatus.source = "data/fire.png"
                 GPIO.output(Buzzer, 1)
                 self.ids.buzzerbutton.background_normal = "data/buzzer.png"
-                client.loop(0.01)
+                client.loop(0.5)
                 #if client.connected_flag:
                 ret = client.publish("/ate/tektron/"+self.configurationVariable['id'],json.dumps(self.configurationVariable),qos=1)
                 print("publish",ret)
