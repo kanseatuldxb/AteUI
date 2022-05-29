@@ -365,7 +365,7 @@ class Test(RelativeLayout):
     
     def SentInitialmsg(self,dt):
         if client.connected_flag:
-            ret = client.publish("/ate/tektron/"+self.configurationVariable['id'],json.dumps(self.configurationVariable),qos=1)
+            ret = client.publish("/ate/tektron/"+self.configurationVariable['id'],json.dumps(self.configurationVariable),qos=0)
             print("publish Inital Message",ret)
     
     def checkconn(self,dt):
@@ -373,7 +373,7 @@ class Test(RelativeLayout):
         self.flag_connected = client.connected_flag
         print(self.flag_connected)
         #if client.connected_flag:
-        ret = client.publish("/ate/tektron/HeartBeats","",qos=1)
+        ret = client.publish("/ate/tektron/HeartBeats","",qos=0)
         print("publish Heartbeat Message",ret)
             
         if(CurrentState == True):
@@ -407,7 +407,7 @@ class Test(RelativeLayout):
         client.loop(0.5)
         #if client.connected_flag:
         print("/ate/tektron/"+self.configurationVariable['id'])
-        ret = client.publish("/ate/tektron/"+self.configurationVariable['id'],json.dumps(self.configurationVariable),qos=1)
+        ret = client.publish("/ate/tektron/"+self.configurationVariable['id'],json.dumps(self.configurationVariable),qos=0)
         print("publish",ret)
         return
 
@@ -423,7 +423,7 @@ class Test(RelativeLayout):
                 self.ids.buzzerbutton.background_normal = "data/buzzer.png"
                 client.loop(0.5)
                 #if client.connected_flag:
-                ret = client.publish("/ate/tektron/"+self.configurationVariable['id'],json.dumps(self.configurationVariable),qos=1)
+                ret = client.publish("/ate/tektron/"+self.configurationVariable['id'],json.dumps(self.configurationVariable),qos=0)
                 print("publish",ret)
                 self.ATEFaultStatus = 1
                 pass
@@ -448,7 +448,7 @@ class Test(RelativeLayout):
                 self.ids.buzzerbutton.background_normal = "data/buzzer.png"
                 client.loop(0.5)
                 #if client.connected_flag:
-                ret = client.publish("/ate/tektron/"+self.configurationVariable['id'],json.dumps(self.configurationVariable),qos=1)
+                ret = client.publish("/ate/tektron/"+self.configurationVariable['id'],json.dumps(self.configurationVariable),qos=0)
                 print("publish",ret)
                 self.ATEFireStatus = 1
                 pass
