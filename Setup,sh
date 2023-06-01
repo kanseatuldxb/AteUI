@@ -1,0 +1,123 @@
+
+
+
+gunicorn --bind 0.0.0.0:8000 Veridos.asgi -w 4 -k uvicorn.workers.UvicornWorker
+gunicorn --bind 0.0.0.0:8000 Veridos.wsgi:application
+uvicorn Veridos.asgi:application --host 0.0.0.0 --port 8080
+gunicorn --bind 0.0.0.0:8000 Veridos.asgi -w 4 -k uvicorn.workers.UvicornWorker
+
+
+[Unit]
+Description=gunicorn daemon
+After==gunicorn.service
+[Service]
+User=jetson
+Group=www-data
+WorkingDirectory=/home/jetson/Module/MiddleWare
+ExecStart=/usr/bin/python3  run.py
+WantedBy=multi-user.target
+
+
+
+
+[Unit]
+Description=gunicorn daemon
+After=network.target
+[Service]
+User=jetson
+Group=www-data
+WorkingDirectory=/home/jetson/Module/Veridos
+ExecStart=/home/jetson/.local/bin/gunicorn --workers 3 --bind unix:/home/jetson/Module/Veridos/Veridos.sock Veridos.wsgi:application
+[Install]
+WantedBy=multi-user.target
+
+
+gunicorn --bind 0.0.0.0:8000 Veridos.asgi -w 4 -k uvicorn.workers.UvicornWorker
+
+
+sudo nano /etc/nginx/sites-available/Veridos
+
+
+server {
+  listen 80;
+  server_name _;
+  location = /favicon.ico { access_log off; log_not_found off; }
+  location /static/ {
+      root /home/jetson/Module/Veridos;
+  }
+  location / {
+      include proxy_params;
+      proxy_pass http://unix:/home/jetson/Module/Veridos/Veridos.sock;
+  }
+}
+
+sudo ln -s /etc/nginx/sites-available/Veridos /etc/nginx/sites-enabled
+
+/home/jetson/.local/bin/gunicorn  --access-logfile - -k uvicorn.workers.UvicornWorker  --workers 3  --bind unix:/run/gunicorn.sock  Veridos.asgi:application
+
+
+
+
+
+
+
+
+
+
+
+###################################################################################################################
+service
+
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+[Service]
+User=jetson
+Group=www-data
+WorkingDirectory=/home/jetson/Module/Veridos
+ExecStart=/home/jetson/.local/bin/gunicorn  --access-logfile - -k uvicorn.workers.UvicornWorker  --workers 3  --bind unix:/home/jetson/Module/Veridos/Veridos.sock  Veridos.asgi:application
+[Install]
+WantedBy=multi-user.target
+
+###################################################################################################################
+nginx/sites-available/Veridos
+
+server {
+  listen 80;
+  server_name _;
+  location = /favicon.ico { access_log off; log_not_found off; }
+  location /static/ {
+      root /home/jetson/Module/Veridos;
+  }
+  location / {
+      include proxy_params;
+      proxy_pass http://unix:/home/jetson/Module/Veridos/Veridos.sock;
+  }
+  location ~ /ws/ {
+        proxy_pass http://unix:/home/jetson/Module/Veridos/Veridos.sock;
+        proxy_http_version 1.1;
+        proxy_redirect off;
+        proxy_buffering off;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+    }
+}
+###################################################################################################################
+gunicornc=socket
+
+[Unit]
+Description=gunicorn socket
+
+[Socket]
+ListenStream=/home/jetson/Module/Veridos/Veridos.sock
+
+[Install]
+WantedBy=sockets.target
+
+###################################################################################################################
