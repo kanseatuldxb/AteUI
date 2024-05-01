@@ -1,4 +1,17 @@
+[Unit]
+Description=Start UI
 
+[Service]
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/matrix/.Xauthority
+ExecStart=/usr/bin/python3 /home/matrix/Module/run.py
+Restart=always
+RestartSec=3s
+KillMode=process
+TimeoutSec=infinity
+
+[Install]
+WantedBy=graphical.target
 
 
 gunicorn --bind 0.0.0.0:8000 Veridos.asgi -w 4 -k uvicorn.workers.UvicornWorker
